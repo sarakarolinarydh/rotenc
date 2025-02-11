@@ -1,0 +1,25 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2711";
+
+	fragment@0 {
+		target-path = "/";
+		__overlay__ {
+			#size-cells = <1>;
+			#address-cells = <2>;
+			rotenc_node@7e200000  {
+				compatible = "rotenc,rotenc";
+				ch_a-gpio = <&gpio 17 0>;
+				ch_b-gpio = <&gpio 7 0>;
+				sw-gpio = <&gpio 18 0>;
+				interrupt-controller;
+				#interrupt-cells = <2>;											
+				interrupts = <17 2>, <18 2>;
+				interrupt-parent = <&gpio>;
+				reg = <0x00000000 0x7e200000 0x1000>;
+			};
+		};
+	};
+};
