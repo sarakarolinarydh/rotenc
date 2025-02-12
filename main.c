@@ -44,10 +44,8 @@ static struct file_operations fops = {
     .release = rotenc_release,
 };
 
-// GPIOs
-static struct gpio_desc *ch_a = NULL;
+// GPIO
 static struct gpio_desc *ch_b = NULL;
-static struct gpio_desc *sw = NULL;
 
 // IRQ
 int irq_ch_a = -1;
@@ -134,31 +132,14 @@ static int dt_probe(struct platform_device *pdev) {
         goto r_class;
     }
 
-    // Rotary encoder, channel A
-    res = 0;
-    res = gpiod_direction_input(ch_a);
-    if (res < 0) {
-        pr_err("rotenc: Error setting direction for GPIO ch_a");
-        goto r_device;
-    }
-
-    // Rotary encoder, SW
-    res = 0;
-    res = gpiod_direction_input(sw);
-    if (res < 0) {
-        pr_err("rotenc: Error setting direction for GPIO sw");
-        goto r_device;
-    }
-
-    // Rotary encoder, channel B
-    gpiod_direction_input(ch_b);
+    // Direction, channel B
     ch_b = gpiod_get(&pdev->dev, "ch_b", GPIOD_IN);
     if (IS_ERR(ch_b)) {
         pr_err("rotenc: Failed to setup channel B\n");
         goto r_device;
     }
 
-    // IRQ channel A
+    // IRQ, channel A
     irq_ch_a = platform_get_irq(pdev, 0);
     if (irq_ch_a < 0) {
         pr_err("rotenc: Error reading the IRQ number %d", irq_ch_a);
@@ -172,7 +153,7 @@ static int dt_probe(struct platform_device *pdev) {
         goto r_cb;
     }
 
-    // IRQ SW
+    // IRQ, SW
     irq_sw = platform_get_irq(pdev, 1);
     if (irq_sw < 0) {
         pr_err("rotenc: Error reading the IRQ number %d", irq_sw);
